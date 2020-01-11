@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
@@ -10,7 +11,7 @@
 class Image {
 public:
     Image(int width, int height) :
-        m_Width(width), m_Height(height)
+        m_Width(width), m_Height(height), m_Samples(0)
     {
         m_Data.resize(width * height);
     }
@@ -21,6 +22,10 @@ public:
 
     int Height() const {
         return m_Height;
+    }
+
+    void IncrementSampleCount(const int numSamples) {
+        m_Samples += numSamples;
     }
 
     const glm::vec3 &Get(int x, int y) const {
@@ -36,10 +41,9 @@ public:
         m_Data[i] = m_Data[i] + c;
     }
 
-    void SavePNG(
-        const std::string &path,
-        const float multiplier, const float exponent) const
-    {
+    void SavePNG(const std::string &path) const {
+        const float multiplier = 1.f / m_Samples;
+        const float exponent = 1.f / 2.2f;
         std::vector<uint8_t> data;
         data.reserve(m_Width * m_Height * 3);
         int i = 0;
@@ -56,10 +60,9 @@ public:
             path.c_str(), m_Width, m_Height, 3, data.data(), m_Width * 3);
     }
 
-    void SavePPM(
-        const std::string &path,
-        const float multiplier, const float exponent) const
-    {
+    void SavePPM(const std::string &path) const {
+        const float multiplier = 1.f / m_Samples;
+        const float exponent = 1.f / 2.2f;
         std::ofstream out(path);
         out << "P3\n";
         out << m_Width << " " << m_Height << "\n";
@@ -81,5 +84,6 @@ public:
 private:
     int m_Width;
     int m_Height;
+    int m_Samples;
     std::vector<glm::vec3> m_Data;
 };

@@ -14,6 +14,10 @@ public:
     Sphere(const glm::vec3 &center, const float radius, const P_Material &material) :
         m_Center(center), m_Radius(radius), m_Material(material) {}
 
+    virtual bool Emits() const {
+        return m_Material->Emits();
+    }
+
     virtual bool Hit(
         const Ray &ray, const float tmin, const float tmax, HitInfo &hit) const
     {

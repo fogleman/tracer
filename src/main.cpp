@@ -1,59 +1,60 @@
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
+#include "gi/gi.hpp"
 
-// #define STB_IMAGE_WRITE_IMPLEMENTATION
-// #include "vendor/stb_image_write.h"
-#include "vendor/json.hpp"
+// #include "vendor/json.hpp"
+// using json = nlohmann::json;
 
-#include "gi/camera.hpp"
-#include "gi/colormap.hpp"
-#include "gi/cube.hpp"
-#include "gi/hit.hpp"
-#include "gi/image.hpp"
-#include "gi/material.hpp"
-#include "gi/medium.hpp"
-#include "gi/microfacet.hpp"
-#include "gi/onb.hpp"
-#include "gi/ray.hpp"
-#include "gi/sampler.hpp"
-#include "gi/sphere.hpp"
-#include "gi/stl.hpp"
-#include "gi/texture.hpp"
-#include "gi/util.hpp"
-
-using json = nlohmann::json;
-
-std::string readFile(std::string filename) {
-    std::ifstream in(filename, std::ios::in | std::ios::binary);
-    if (in) {
-        std::string contents;
-        in.seekg(0, std::ios::end);
-        contents.resize(in.tellg());
-        in.seekg(0, std::ios::beg);
-        in.read(&contents[0], contents.size());
-        in.close();
-        return contents;
-    }
-    throw errno;
-}
+// std::string ReadFile(const std::string &filename) {
+//     std::ifstream in(filename, std::ios::in | std::ios::binary);
+//     if (in) {
+//         std::string contents;
+//         in.seekg(0, std::ios::end);
+//         contents.resize(in.tellg());
+//         in.seekg(0, std::ios::beg);
+//         in.read(&contents[0], contents.size());
+//         in.close();
+//         return contents;
+//     }
+//     throw errno;
+// }
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        std::cerr << "Usage: gi config.json" << std::endl;
-        return 1;
-    }
+    auto world = std::make_shared<HittableList>();
 
-    const std::string filename(argv[1]);
-    const std::string contents = readFile(filename);
-    const auto config = json::parse(contents);
-    std::cout << config << std::endl;
-    std::cout << config["render"]["width"] << std::endl;
-    // std::string path = "out.png";
-    // const int w = 1024;
-    // const int h = 1024;
-    // std::vector<uint8_t> data(w * h * 3);
-    // stbi_write_png(path.c_str(), w, h, 3, data.data(), w * 3);
+    const auto red = std::make_shared<Lambertian>(
+        std::make_shared<SolidTexture>(glm::vec3(0.65, 0.05, 0.05)));
+    world->Add(std::make_shared<Sphere>(glm::vec3(0, 0, 0), 1, red));
+    world->Add(std::make_shared<Sphere>(glm::vec3(0, 0, -11), 10, red));
+
+    const auto light = std::make_shared<DiffuseLight>(
+        std::make_shared<SolidTexture>(Kelvin(5000) * 50.f));
+    world->Add(std::make_shared<Sphere>(glm::vec3(3, 4, 5), 1, light));
+
+    const int width = 1024;
+    const int height = 1024;
+
+    const glm::vec3 eye(4, 4, 2);
+    const glm::vec3 center(0, 0, 0);
+    const glm::vec3 up(0, 0, 1);
+    const float fovy = 50;
+    const float aspect = float(width) / height;
+    const float aperture = 0;
+    const float focalDistance = 1;
+
+    Camera camera(eye, center, up, fovy, aspect, aperture, focalDistance);
+    Sampler sampler(world);
+    Image image(1024, 1024);
+    Render(image, sampler, camera, 256, 16);
+    image.SavePNG("out.png");
+
+    // if (argc != 2) {
+    //     std::cerr << "Usage: gi config.json" << std::endl;
+    //     return 1;
+    // }
+
+    // const std::string filename(argv[1]);
+    // const std::string contents = readFile(filename);
+    // const auto config = json::parse(contents);
+    // std::cout << config << std::endl;
+    // std::cout << config["render"]["width"] << std::endl;
     return 0;
 }

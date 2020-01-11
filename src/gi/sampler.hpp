@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/component_wise.hpp>
+#include <memory>
 
 #include "constants.hpp"
 #include "hit.hpp"
@@ -112,3 +113,5 @@ private:
     int m_MinBounces;
     int m_MaxBounces;
 };
+
+typedef std::shared_ptr<Sampler> P_Sampler;
