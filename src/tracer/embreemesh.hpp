@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "material.hpp"
-#include "triangle.hpp"
+#include "mesh.hpp"
 
 typedef struct {
     float x, y, z;
@@ -14,41 +14,39 @@ typedef struct {
     int v0, v1, v2;
 } EmbreeTriangle;
 
-// TODO: add a mesh class with indexed vertices
-
 class EmbreeMesh : public Hittable {
 public:
     EmbreeMesh(
         RTCDevice device,
-        const std::vector<Triangle> &triangles,
+        const P_Mesh &mesh,
         const P_Material &material) :
-        m_Triangles(triangles),
+        m_Mesh(mesh),
         m_Material(material)
     {
         m_Scene = rtcNewScene(device);
         RTCGeometry geom = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 
+        const auto positions = mesh->Positions();
+        const auto triangles = mesh->Triangles();
+
         EmbreeVertex *vertexBuf = (EmbreeVertex *)rtcSetNewGeometryBuffer(
             geom, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3,
-            sizeof(EmbreeVertex), m_Triangles.size() * 3);
-        for (int i = 0; i < m_Triangles.size(); i++) {
-            const auto &t = m_Triangles[i];
-            vertexBuf[i*3+0].x = t.v1.x;
-            vertexBuf[i*3+0].y = t.v1.y;
-            vertexBuf[i*3+0].z = t.v1.z;
-            vertexBuf[i*3+1].x = t.v2.x;
-            vertexBuf[i*3+1].y = t.v2.y;
-            vertexBuf[i*3+1].z = t.v2.z;
-            vertexBuf[i*3+2].x = t.v3.x;
-            vertexBuf[i*3+2].y = t.v3.y;
-            vertexBuf[i*3+2].z = t.v3.z;
+            sizeof(EmbreeVertex), positions.size());
+        for (int i = 0; i < positions.size(); i++) {
+            const auto &p = positions[i];
+            vertexBuf[i].x = p.x;
+            vertexBuf[i].y = p.y;
+            vertexBuf[i].z = p.z;
         }
 
         EmbreeTriangle *triangleBuf = (EmbreeTriangle *)rtcSetNewGeometryBuffer(
             geom, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3,
-            sizeof(EmbreeTriangle), m_Triangles.size());
-        for (int i = 0; i < m_Triangles.size(); i++) {
-            triangleBuf[i] = EmbreeTriangle{i*3+0, i*3+1, i*3+2};
+            sizeof(EmbreeTriangle), triangles.size());
+        for (int i = 0; i < triangles.size(); i++) {
+            const auto &t = triangles[i];
+            triangleBuf[i].v0 = t.x;
+            triangleBuf[i].v1 = t.y;
+            triangleBuf[i].v2 = t.z;
         }
 
         rtcCommitGeometry(geom);
@@ -92,13 +90,13 @@ public:
 
         hit.T = t;
         hit.Position = vec3(x, y, z);
-        hit.Normal = m_Triangles[r.hit.primID].NormalAt(hit.Position);
+        hit.Normal = m_Mesh->TriangleNormalAt(r.hit.primID, hit.Position);
         hit.Material = m_Material;
         return true;
     }
 
 private:
     RTCScene m_Scene;
-    std::vector<Triangle> m_Triangles;
+    P_Mesh m_Mesh;
     P_Material m_Material;
 };

@@ -5,12 +5,13 @@ int main(int argc, char **argv) {
 
     const RTCDevice device = rtcNewDevice(NULL);
 
-    const auto triangles = LoadBinarySTL(argv[1]);
+    auto mesh = LoadBinarySTL(argv[1]);
+    mesh->FitInUnitCube();
 
     const auto material = std::make_shared<OrenNayar>(
         std::make_shared<SolidTexture>(vec3(0.9)), 20);
 
-    world->Add(std::make_shared<EmbreeMesh>(device, triangles, material));
+    world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
 
     const auto light = std::make_shared<DiffuseLight>(
         std::make_shared<SolidTexture>(Kelvin(5000) * real(45)));

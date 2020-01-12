@@ -118,8 +118,8 @@ public:
         const vec3 rs = m_Rs->Sample(0, 0, p);
         const vec3 diffuse = real(28 / (23 * PI)) * rd *
             (vec3(1) - rs) *
-            (1 - std::pow(1 - 0.5 * AbsCosTheta(wi), 5)) *
-            (1 - std::pow(1 - 0.5 * AbsCosTheta(wo), 5));
+            real(1 - std::pow(1 - 0.5 * AbsCosTheta(wi), 5)) *
+            real(1 - std::pow(1 - 0.5 * AbsCosTheta(wo), 5));
         const vec3 wh = glm::normalize(wi + wo);
         const vec3 specular = m_Distribution->D(wh) /
             (4 * std::abs(glm::dot(wi, wh)) *

@@ -1,3 +1,6 @@
+#pragma once
+
+#include "box.hpp"
 #include "camera.hpp"
 #include "colormap.hpp"
 #include "config.hpp"
@@ -8,6 +11,7 @@
 #include "image.hpp"
 #include "material.hpp"
 #include "medium.hpp"
+#include "mesh.hpp"
 #include "microfacet.hpp"
 #include "onb.hpp"
 #include "ray.hpp"
