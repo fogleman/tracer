@@ -109,6 +109,10 @@ public:
         FitInside(box, vec3(0.5));
     }
 
+    void Rotate(const real radians, const vec3 &axis) {
+        Transform(glm::rotate(mat4(1), radians, axis));
+    }
+
 private:
     std::vector<vec3> m_Positions;
     std::vector<vec3> m_Normals;

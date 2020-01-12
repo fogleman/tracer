@@ -1,35 +1,36 @@
 #include "tracer/tracer.hpp"
 
+const int width = 1600;
+const int height = 1600;
+const int numFrames = 0;
+const int numSamples = 16;
+const int numThreads = 16;
+
+const vec3 eye(3, 0, 1);
+const vec3 center(0, 0, 0);
+const vec3 up(0, 0, 1);
+const real fovy = 25;
+const real aspect = real(width) / height;
+const real aperture = 0.01;
+const real focalDistance = 2.75;
+
 int main(int argc, char **argv) {
     auto world = std::make_shared<HittableList>();
 
-    const RTCDevice device = rtcNewDevice(NULL);
+    RTCDevice device = rtcNewDevice(NULL);
 
     auto mesh = LoadBinarySTL(argv[1]);
     mesh->FitInUnitCube();
+    mesh->Rotate(glm::radians(90.f), up);
 
-    const auto material = std::make_shared<OrenNayar>(
-        std::make_shared<SolidTexture>(vec3(0.9)), 20);
+    auto material = std::make_shared<OrenNayar>(
+        std::make_shared<SolidTexture>(HexColor(0xFFF0A5)), 20);
 
     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
 
-    const auto light = std::make_shared<DiffuseLight>(
-        std::make_shared<SolidTexture>(Kelvin(5000) * real(45)));
-    world->Add(std::make_shared<Sphere>(vec3(2, 3, 2), 1, light));
-
-    const int width = 1024;
-    const int height = 1024;
-    const int numFrames = 0;
-    const int numSamples = 16;
-    const int numThreads = 16;
-
-    const vec3 eye(3, 0, 0);
-    const vec3 center(0, 0, 0);
-    const vec3 up(0, 0, 1);
-    const real fovy = 22;
-    const real aspect = real(width) / height;
-    const real aperture = 0.01;
-    const real focalDistance = 2.75;
+    auto light = std::make_shared<DiffuseLight>(
+        std::make_shared<SolidTexture>(Kelvin(5000) * real(30)));
+    world->Add(std::make_shared<Sphere>(vec3(3, 2, 2), 1, light));
 
     Camera camera(eye, center, up, fovy, aspect, aperture, focalDistance);
     Sampler sampler(world);
