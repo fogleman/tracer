@@ -7,7 +7,7 @@ const int numSamples = 16;
 const int numThreads = 16;
 
 const vec3 eye(3, 0, 1);
-const vec3 center(0, 0, 0);
+const vec3 center(0, 0, -0.1);
 const vec3 up(0, 0, 1);
 const real fovy = 25;
 const real aspect = real(width) / height;
@@ -20,13 +20,23 @@ int main(int argc, char **argv) {
     RTCDevice device = rtcNewDevice(NULL);
 
     auto mesh = LoadBinarySTL(argv[1]);
+    mesh->SmoothNormals();
     mesh->FitInUnitCube();
     mesh->Rotate(glm::radians(90.f), up);
 
-    auto material = std::make_shared<OrenNayar>(
-        std::make_shared<SolidTexture>(HexColor(0xFFF0A5)), 20);
+    auto blinn = std::make_shared<BlinnDistribution>(100);
+    auto albedo = std::make_shared<SolidTexture>(HexColor(0xFFF0A5));
+    auto material = std::make_shared<Microfacet>(albedo, blinn, 2);
+    // auto material = std::make_shared<FresnelBlend>(albedo, albedo, blinn);
+    // auto material = std::make_shared<SpecularReflection>(albedo, 1.5);
+    // auto material = std::make_shared<OrenNayar>(
+    //     std::make_shared<SolidTexture>(HexColor(0xFFF0A5)), 20);
 
     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
+
+    auto white = std::make_shared<OrenNayar>(
+        std::make_shared<SolidTexture>(vec3(0.9)), 20);
+    world->Add(std::make_shared<Cube>(vec3(-100), vec3(100, 100, -0.5), white));
 
     auto light = std::make_shared<DiffuseLight>(
         std::make_shared<SolidTexture>(Kelvin(5000) * real(30)));

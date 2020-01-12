@@ -44,6 +44,22 @@ public:
         return m_Triangles;
     }
 
+    void SmoothNormals() {
+        m_Normals.resize(m_Positions.size(), vec3(0));
+        for (const auto &t : m_Triangles) {
+            const vec3 v1 = m_Positions[t.x];
+            const vec3 v2 = m_Positions[t.y];
+            const vec3 v3 = m_Positions[t.z];
+            const vec3 n = glm::triangleNormal(v1, v2, v3);
+            m_Normals[t.x] += n;
+            m_Normals[t.y] += n;
+            m_Normals[t.z] += n;
+        }
+        for (int i = 0; i < m_Normals.size(); i++) {
+            m_Normals[i] = glm::normalize(m_Normals[i]);
+        }
+    }
+
     // TODO: cache bounding box?
     Box BoundingBox() const {
         if (m_Positions.empty()) {
@@ -63,7 +79,14 @@ public:
         const vec3 v1 = m_Positions[t.x];
         const vec3 v2 = m_Positions[t.y];
         const vec3 v3 = m_Positions[t.z];
-        return glm::triangleNormal(v1, v2, v3);
+        if (m_Normals.empty()) {
+            return glm::triangleNormal(v1, v2, v3);
+        }
+        const vec3 b = Barycentric(v1, v2, v3, position);
+        const vec3 n1 = m_Normals[t.x];
+        const vec3 n2 = m_Normals[t.y];
+        const vec3 n3 = m_Normals[t.z];
+        return n1 * b.x + n2 * b.y + n3 * b.z;
     }
 
     void Transform(const mat4 &m) {
