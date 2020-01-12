@@ -1,4 +1,4 @@
-#include "gi/gi.hpp"
+#include "tracer/tracer.hpp"
 
 #include <sstream>
 #include <vector>
@@ -71,8 +71,8 @@ int main(int argc, char **argv) {
         std::make_shared<SolidTexture>(Kelvin(5000) * real(45)));
     world->Add(std::make_shared<Sphere>(vec3(2, 3, 2), 1, light));
 
-    const int width = 1600;
-    const int height = 1600;
+    const int width = 10000;
+    const int height = 10000;
     const int numFrames = 0;
     const int numSamples = 16;
     const int numThreads = 16;
