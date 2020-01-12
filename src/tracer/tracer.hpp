@@ -2,6 +2,7 @@
 #include "colormap.hpp"
 #include "config.hpp"
 #include "cube.hpp"
+#include "embreemesh.hpp"
 #include "embreespheres.hpp"
 #include "hit.hpp"
 #include "image.hpp"

@@ -164,3 +164,21 @@ inline real SinPhi(const vec3 &w) {
 inline bool SameHemisphere(const vec3 &a, const vec3 &b) {
     return a.z * b.z > 0;
 }
+
+inline vec3 Barycentric(
+    const vec3 &p1, const vec3 &p2, const vec3 &p3, const vec3 &p)
+{
+    const vec3 v0 = p2 - p1;
+    const vec3 v1 = p3 - p1;
+    const vec3 v2 = p - p1;
+    const real d00 = glm::dot(v0, v0);
+    const real d01 = glm::dot(v0, v1);
+    const real d11 = glm::dot(v1, v1);
+    const real d20 = glm::dot(v2, v0);
+    const real d21 = glm::dot(v2, v1);
+    const real d = d00 * d11 - d01 * d01;
+    const real v = (d11 * d20 - d01 * d21) / d;
+    const real w = (d00 * d21 - d01 * d20) / d;
+    const real u = 1 - v - w;
+    return vec3(u, v, w);
+}
