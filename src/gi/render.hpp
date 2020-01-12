@@ -35,6 +35,8 @@ void Render(
                     }
                     image.Add(x, y, c);
                 }
+                // printf(".");
+                // fflush(stdout);
             }
         }, wi));
     }
