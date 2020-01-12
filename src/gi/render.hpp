@@ -1,11 +1,11 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <thread>
 #include <pmmintrin.h>
 #include <xmmintrin.h>
 
 #include "camera.hpp"
+#include "config.hpp"
 #include "image.hpp"
 #include "ray.hpp"
 #include "sampler.hpp"
@@ -26,10 +26,10 @@ void Render(
             _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
             for (int y = i; y < h; y += wn) {
                 for (int x = 0; x < w; x++) {
-                    glm::vec3 c(0);
+                    vec3 c(0);
                     for (int s = 0; s < numSamples; s++) {
-                        const float u = (x + Random()) / w;
-                        const float v = (y + Random()) / h;
+                        const real u = (x + Random()) / w;
+                        const real v = (y + Random()) / h;
                         const Ray ray = camera.MakeRay(u, 1 - v);
                         c += sampler.Sample(ray);
                     }

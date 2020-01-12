@@ -1,6 +1,6 @@
 #include "camera.hpp"
 #include "colormap.hpp"
-#include "constants.hpp"
+#include "config.hpp"
 #include "cube.hpp"
 #include "hit.hpp"
 #include "image.hpp"

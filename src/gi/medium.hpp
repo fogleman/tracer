@@ -2,39 +2,39 @@
 
 #include <glm/glm.hpp>
 
-#include "constants.hpp"
+#include "config.hpp"
 #include "hit.hpp"
 
 class ConstantMedium : public Hittable {
 public:
     ConstantMedium(
         const P_Hittable &boundary, const P_Texture &texture,
-        const float density) :
+        const real density) :
     m_Boundary(boundary),
     m_Material(std::make_shared<Isotropic>(texture)),
     m_Density(density) {}
 
     virtual bool Hit(
-        const Ray &ray, const float tmin, const float tmax, HitInfo &hit) const
+        const Ray &ray, const real tmin, const real tmax, HitInfo &hit) const
     {
         HitInfo boundaryHit;
         if (m_Boundary->Hit(ray, EPS, INF, boundaryHit)) {
             if (glm::dot(ray.Direction(), boundaryHit.Normal) > 0) {
-                const float distanceInsideBoundary = boundaryHit.T * glm::length(ray.Direction());
-                const float hitDistance = -std::log(Random()) / m_Density;
+                const real distanceInsideBoundary = boundaryHit.T * glm::length(ray.Direction());
+                const real hitDistance = -std::log(Random()) / m_Density;
                 if (hitDistance < distanceInsideBoundary) {
                     hit.T = hitDistance / glm::length(ray.Direction());
                     hit.Position = ray.At(hit.T);
-                    hit.Normal = glm::vec3(0, 1, 0);
+                    hit.Normal = vec3(0, 1, 0);
                     hit.Material = m_Material;
                     return true;
                 }
             } else {
-                const float t = boundaryHit.T;
+                const real t = boundaryHit.T;
                 if (m_Boundary->Hit(ray, t + EPS, INF, boundaryHit)) {
                     if (glm::dot(ray.Direction(), boundaryHit.Normal) > 0) {
-                        const float distanceInsideBoundary = (boundaryHit.T - t) * glm::length(ray.Direction());
-                        const float hitDistance = -std::log(Random()) / m_Density;
+                        const real distanceInsideBoundary = (boundaryHit.T - t) * glm::length(ray.Direction());
+                        const real hitDistance = -std::log(Random()) / m_Density;
                         if (hitDistance < distanceInsideBoundary) {
                             hit.T = hitDistance / glm::length(ray.Direction());
                             hit.Position = ray.At(hit.T);
@@ -61,8 +61,8 @@ public:
         //         if (hit1.T < 0) {
         //             hit1.T = 0;
         //         }
-        //         const float distanceInsideBoundary = (hit2.T - hit1.T) * ray.Direction().Length();
-        //         const float hitDistance = -std::log(Random()) / m_Density;
+        //         const real distanceInsideBoundary = (hit2.T - hit1.T) * ray.Direction().Length();
+        //         const real hitDistance = -std::log(Random()) / m_Density;
         //         if (hitDistance < distanceInsideBoundary) {
         //             hit.T = hit1.T + hitDistance / ray.Direction().Length();
         //             hit.Position = ray.At(hit.T);
@@ -78,5 +78,5 @@ public:
 private:
     P_Hittable m_Boundary;
     P_Material m_Material;
-    float m_Density;
+    real m_Density;
 };
