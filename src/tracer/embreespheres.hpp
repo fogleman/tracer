@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <embree3/rtcore.h>
 #include <glm/glm.hpp>
 #include <string>

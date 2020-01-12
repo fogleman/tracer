@@ -80,10 +80,10 @@ int main(int argc, char **argv) {
     const vec3 eye(3, 0, 0);
     const vec3 center(0, 0, 0);
     const vec3 up(0, 0, 1);
-    const float fovy = 22;
-    const float aspect = float(width) / height;
-    const float aperture = 0.01;
-    const float focalDistance = 2.75;
+    const real fovy = 22;
+    const real aspect = real(width) / height;
+    const real aperture = 0.01;
+    const real focalDistance = 2.75;
 
     Camera camera(eye, center, up, fovy, aspect, aperture, focalDistance);
     Sampler sampler(world);
