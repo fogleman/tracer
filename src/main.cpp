@@ -16,6 +16,11 @@ const real aperture = 0.01;
 const real focalDistance = 3;
 
 int main(int argc, char **argv) {
+    if (argc != 2) {
+        std::cout << "Usage: tracer input.stl" << std::endl;
+        return 1;
+    }
+
     RTCDevice device = rtcNewDevice(NULL);
 
     auto world = std::make_shared<HittableList>();
