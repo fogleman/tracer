@@ -1,23 +1,24 @@
 #include "tracer/tracer.hpp"
 
-const int width = 1200*2;
-const int height = 1600*2;
-const int numFrames = 0;
-const int numSamples = 16;
-const int numThreads = 16;
+const int width = 1600;
+const int height = 1600;
+
+const int samplesPerFrame = 16;
+const int numFrames = -1;
+const int numThreads = -1;
 
 const vec3 eye(3, 0, 1);
 const vec3 center(0, 0, 0);
 const vec3 up(0, 0, 1);
 const real fovy = 25;
 const real aspect = real(width) / height;
-const real aperture = 0.02;
-const real focalDistance = 3.125;
+const real aperture = 0.01;
+const real focalDistance = 3;
 
 int main(int argc, char **argv) {
-    auto world = std::make_shared<HittableList>();
-
     RTCDevice device = rtcNewDevice(NULL);
+
+    auto world = std::make_shared<HittableList>();
 
     auto mesh = LoadBinarySTL(argv[1]);
     // mesh->SmoothNormals();
@@ -48,18 +49,7 @@ int main(int argc, char **argv) {
     Sampler sampler(world);
     Image image(width, height);
 
-    for (int i = 1; ; i++) {
-        char path[100];
-        snprintf(path, 100, "%08d.png", i - 1);
-        std::cout << path << std::endl;
-
-        Render(image, sampler, camera, numSamples, numThreads);
-        image.SavePNG(path);
-
-        if (numFrames > 0 && i == numFrames) {
-            break;
-        }
-    }
+    Run(image, sampler, camera, numFrames, samplesPerFrame, numThreads);
 
     return 0;
 }

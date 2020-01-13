@@ -18,7 +18,8 @@ void Render(
 {
     const int w = image.Width();
     const int h = image.Height();
-    const int wn = numThreads;
+    const int wn = numThreads > 0 ?
+        numThreads : std::max(1u, std::thread::hardware_concurrency());
 
     ProgressBar bar;
     bar.Start(h);
@@ -55,4 +56,22 @@ void Render(
     }
 
     bar.Done();
+}
+
+void Run(
+    Image &image, const Sampler &sampler, const Camera &camera,
+    const int numFrames, const int numSamples, const int numThreads)
+{
+    for (int i = 1; ; i++) {
+        char path[100];
+        snprintf(path, 100, "%08d.png", i - 1);
+        std::cout << path << std::endl;
+
+        Render(image, sampler, camera, numSamples, numThreads);
+        image.SavePNG(path);
+
+        if (numFrames > 0 && i == numFrames) {
+            break;
+        }
+    }
 }
