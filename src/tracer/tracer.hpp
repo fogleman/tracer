@@ -14,6 +14,7 @@
 #include "mesh.hpp"
 #include "microfacet.hpp"
 #include "onb.hpp"
+#include "progress.hpp"
 #include "ray.hpp"
 #include "render.hpp"
 #include "sampler.hpp"

@@ -7,6 +7,7 @@
 #include "camera.hpp"
 #include "config.hpp"
 #include "image.hpp"
+#include "progress.hpp"
 #include "ray.hpp"
 #include "sampler.hpp"
 #include "util.hpp"
@@ -18,6 +19,9 @@ void Render(
     const int w = image.Width();
     const int h = image.Height();
     const int wn = numThreads;
+
+    ProgressBar bar;
+    bar.Start(h);
 
     std::vector<std::thread> threads;
     for (int wi = 0; wi < wn; wi++) {
@@ -35,6 +39,7 @@ void Render(
                     }
                     image.Add(x, y, c);
                 }
+                bar.Increment();
                 // printf(".");
                 // fflush(stdout);
             }
@@ -46,4 +51,5 @@ void Render(
     }
 
     image.IncrementSampleCount(numSamples);
+    bar.Done();
 }
