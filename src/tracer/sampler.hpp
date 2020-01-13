@@ -27,9 +27,6 @@ public:
         bool specular = true;
         Ray ray(cameraRay);
 
-        // TODO: handle zero or many lights
-        const P_Hittable light = m_World->Lights()[0];
-
         for (int bounces = 0; bounces < m_MaxBounces; bounces++) {
             HitInfo hit;
             if (!m_World->Hit(ray, EPS, INF, hit)) {
@@ -55,15 +52,17 @@ public:
 
             // direct lighting
             if (!specular) {
-                const Ray lightRay = light->RandomRay(p);
-                HitInfo lightHit;
-                if (m_World->Hit(lightRay, EPS, INF, lightHit)) {
-                    const vec3 Li = lightHit.Material->Emitted(0, 0, lightHit.Position);
-                    if (glm::compMax(Li) > 0 && glm::dot(lightHit.Normal, lightRay.Direction()) < 0) {
-                        const real lightPdf = light->Pdf(lightRay);
-                        const vec3 lwi = onb.WorldToLocal(lightRay.Direction());
-                        const vec3 direct = hit.Material->f(p, wo, lwi) * Li / lightPdf;
-                        color = color + throughput * direct * std::abs(lwi.z);
+                for (const auto &light : m_World->Lights()) {
+                    const Ray lightRay = light->RandomRay(p);
+                    HitInfo lightHit;
+                    if (m_World->Hit(lightRay, EPS, INF, lightHit)) {
+                        const vec3 Li = lightHit.Material->Emitted(0, 0, lightHit.Position);
+                        if (glm::compMax(Li) > 0 && glm::dot(lightHit.Normal, lightRay.Direction()) < 0) {
+                            const real lightPdf = light->Pdf(lightRay);
+                            const vec3 lwi = onb.WorldToLocal(lightRay.Direction());
+                            const vec3 direct = hit.Material->f(p, wo, lwi) * Li / lightPdf;
+                            color = color + throughput * direct * std::abs(lwi.z);
+                        }
                     }
                 }
             }
