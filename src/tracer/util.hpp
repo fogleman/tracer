@@ -15,6 +15,13 @@ inline real Random() {
     return dist(gen);
 }
 
+inline int RandomIntN(const int n) {
+    static thread_local std::mt19937 gen(
+        std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<real> dist(0, n - 1);
+    return dist(gen);
+}
+
 inline vec3 RandomInUnitSphere() {
     while (true) {
         const vec3 p = vec3(

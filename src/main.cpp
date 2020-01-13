@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     // auto blinn = std::make_shared<BlinnDistribution>(100);
     // auto albedo = std::make_shared<SolidTexture>(HexColor(0xFFF0A5));
     // auto material = std::make_shared<Microfacet>(albedo, blinn, 2);
+    // auto material = std::make_shared<Metal>(albedo);
     // auto material = std::make_shared<FresnelBlend>(albedo, albedo, blinn);
     // auto material = std::make_shared<SpecularReflection>(albedo, 1.5);
     auto material = std::make_shared<Lambertian>(

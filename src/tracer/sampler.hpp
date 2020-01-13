@@ -9,6 +9,8 @@
 #include "ray.hpp"
 #include "util.hpp"
 
+// flag: sample one random light or sample all lights
+
 class Sampler {
 public:
     Sampler(const P_HittableList &world) :
@@ -26,6 +28,8 @@ public:
         vec3 throughput(1, 1, 1);
         bool specular = true;
         Ray ray(cameraRay);
+
+        const auto &lights = m_World->Lights();
 
         for (int bounces = 0; bounces < m_MaxBounces; bounces++) {
             HitInfo hit;
@@ -51,7 +55,8 @@ public:
             const vec3 a = hit.Material->Sample_f(p, wo, wi, pdf, specular);
 
             // direct lighting
-            if (!specular) {
+            if (!specular && !lights.empty()) {
+                // const auto &light = lights[RandomIntN(lights.size())];
                 for (const auto &light : m_World->Lights()) {
                     const Ray lightRay = light->RandomRay(p);
                     HitInfo lightHit;
