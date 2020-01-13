@@ -2,8 +2,6 @@
 
 This is a [path tracer](https://en.wikipedia.org/wiki/Path_tracing) written in C++. (Work in progress!)
 
-Note that main.cpp is currently set up for a specific personal project.
-
 ### Requirements
 
 - boost
