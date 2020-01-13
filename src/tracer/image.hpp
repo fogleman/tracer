@@ -10,12 +10,49 @@
 
 #include "config.hpp"
 
+class Pixel {
+public:
+    Pixel() :
+        m_NumSamples(0), m_Mean(0), m_Variance(0) {}
+
+    vec3 Color() const {
+        return m_Mean;
+    }
+
+    vec3 Variance() const {
+        if (m_NumSamples < 2) {
+            return vec3(0);
+        }
+        return m_Variance / real(m_NumSamples - 1);
+    }
+
+    vec3 StandardDeviation() const {
+        return glm::sqrt(Variance());
+    }
+
+    void AddSample(const vec3 &c) {
+        m_NumSamples++;
+        if (m_NumSamples == 1) {
+            m_Mean = c;
+            return;
+        }
+        const vec3 m = m_Mean;
+        m_Mean += (c - m_Mean) / real(m_NumSamples);
+        m_Variance += (c - m) * (c - m_Mean);
+    }
+
+private:
+    int m_NumSamples;
+    vec3 m_Mean;
+    vec3 m_Variance;
+};
+
 class Image {
 public:
     Image(int width, int height) :
-        m_Width(width), m_Height(height), m_Samples(0)
+        m_Width(width), m_Height(height)
     {
-        m_Data.resize(width * height);
+        m_Pixels.resize(width * height);
     }
 
     int Width() const {
@@ -26,33 +63,30 @@ public:
         return m_Height;
     }
 
-    void IncrementSampleCount(const int numSamples) {
-        m_Samples += numSamples;
+    void AddSample(const int x, const int y, const vec3 &c) {
+        m_Pixels[y * m_Width + x].AddSample(c);
     }
 
-    const vec3 &Get(int x, int y) const {
-        return m_Data[y * m_Width + x];
+    vec3 Color(const int x, const int y) const {
+        return m_Pixels[y * m_Width + x].Color();
     }
 
-    void Set(int x, int y, const vec3 &c) {
-        m_Data[y * m_Width + x] = c;
+    vec3 Variance(const int x, const int y) const {
+        return m_Pixels[y * m_Width + x].Variance();
     }
 
-    void Add(int x, int y, const vec3 &c) {
-        const int i = y * m_Width + x;
-        m_Data[i] = m_Data[i] + c;
+    vec3 StandardDeviation(const int x, const int y) const {
+        return m_Pixels[y * m_Width + x].StandardDeviation();
     }
 
     void SavePNG(const std::string &path) const {
-        const real multiplier = 1.f / m_Samples;
-        const real exponent = 1.f / 2.2f;
+        const vec3 exponent = vec3(1 / 2.2);
         std::vector<uint8_t> data;
         data.reserve(m_Width * m_Height * 3);
         int i = 0;
         for (int y = 0; y < m_Height; y++) {
             for (int x = 0; x < m_Width; x++) {
-                const vec3 &c = glm::pow(
-                    m_Data[i++] * multiplier, vec3(exponent));
+                const vec3 c = glm::pow(m_Pixels[i++].Color(), exponent);
                 data.push_back(std::min(c.r * 256, real(255)));
                 data.push_back(std::min(c.g * 256, real(255)));
                 data.push_back(std::min(c.b * 256, real(255)));
@@ -63,8 +97,7 @@ public:
     }
 
     void SavePPM(const std::string &path) const {
-        const real multiplier = 1.f / m_Samples;
-        const real exponent = 1.f / 2.2f;
+        const vec3 exponent = vec3(1 / 2.2);
         std::ofstream out(path);
         out << "P3\n";
         out << m_Width << " " << m_Height << "\n";
@@ -72,8 +105,7 @@ public:
         int i = 0;
         for (int y = 0; y < m_Height; y++) {
             for (int x = 0; x < m_Width; x++) {
-                const vec3 &c = glm::pow(
-                    m_Data[i++] * multiplier, vec3(exponent));
+                const vec3 c = glm::pow(m_Pixels[i++].Color(), exponent);
                 const int r = std::min(c.r * 256, real(255));
                 const int g = std::min(c.g * 256, real(255));
                 const int b = std::min(c.b * 256, real(255));
@@ -86,6 +118,5 @@ public:
 private:
     int m_Width;
     int m_Height;
-    int m_Samples;
-    std::vector<vec3> m_Data;
+    std::vector<Pixel> m_Pixels;
 };

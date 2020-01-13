@@ -24,13 +24,13 @@ int main(int argc, char **argv) {
     mesh->FitInUnitCube();
     mesh->Rotate(glm::radians(90.f), up);
 
-    // auto blinn = std::make_shared<BlinnDistribution>(100);
-    // auto albedo = std::make_shared<SolidTexture>(HexColor(0xFFF0A5));
-    // auto material = std::make_shared<Microfacet>(albedo, blinn, 2);
+    auto blinn = std::make_shared<BlinnDistribution>(100);
+    auto albedo = std::make_shared<SolidTexture>(HexColor(0xFFF0A5));
+    auto material = std::make_shared<Microfacet>(albedo, blinn, 2);
     // auto material = std::make_shared<FresnelBlend>(albedo, albedo, blinn);
     // auto material = std::make_shared<SpecularReflection>(albedo, 1.5);
-    auto material = std::make_shared<Lambertian>(
-        std::make_shared<SolidTexture>(HexColor(0x7ECEFD) * 0.8));
+    // auto material = std::make_shared<Lambertian>(
+    //     std::make_shared<SolidTexture>(HexColor(0x7ECEFD) * 0.8));
 
     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
 

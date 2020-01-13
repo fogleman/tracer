@@ -30,18 +30,22 @@ void Render(
             _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
             for (int y = i; y < h; y += wn) {
                 for (int x = 0; x < w; x++) {
-                    vec3 c(0);
                     for (int s = 0; s < numSamples; s++) {
                         const real u = (x + Random()) / w;
                         const real v = (y + Random()) / h;
                         const Ray ray = camera.MakeRay(u, 1 - v);
-                        c += sampler.Sample(ray);
+                        image.AddSample(x, y, sampler.Sample(ray));
                     }
-                    image.Add(x, y, c);
+                    if (glm::compMax(image.StandardDeviation(x, y)) > 1) {
+                        for (int s = 0; s < 1024; s++) {
+                            const real u = (x + Random()) / w;
+                            const real v = (y + Random()) / h;
+                            const Ray ray = camera.MakeRay(u, 1 - v);
+                            image.AddSample(x, y, sampler.Sample(ray));
+                        }
+                    }
                 }
                 bar.Increment();
-                // printf(".");
-                // fflush(stdout);
             }
         }, wi));
     }
@@ -50,6 +54,5 @@ void Render(
         threads[wi].join();
     }
 
-    image.IncrementSampleCount(numSamples);
     bar.Done();
 }
