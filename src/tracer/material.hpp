@@ -238,6 +238,25 @@ private:
     P_Texture m_Albedo;
 };
 
+class Velvet : public Material {
+public:
+    Velvet(const P_Texture &albedo, const real factor) :
+        m_Albedo(albedo), m_Factor(factor) {}
+
+    virtual vec3 f(
+        const vec3 &p, const vec3 &wo, const vec3 &wi) const
+    {
+        const real cosThetaO = std::max(real(0), wo.z);
+        const real cosThetaI = std::max(real(0), wi.z);
+        const real sinThetaO = std::sqrt(1 - cosThetaO * cosThetaO);
+        const real horizonScatter = std::pow(sinThetaO, m_Factor);
+        return horizonScatter * cosThetaI * m_Albedo->Sample(0, 0, p) / PI;
+    }
+private:
+    P_Texture m_Albedo;
+    real m_Factor;
+};
+
 class Dielectric : public Material {
 public:
     Dielectric(const P_Texture &albedo, const real eta) :
