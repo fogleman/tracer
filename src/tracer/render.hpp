@@ -38,7 +38,7 @@ void Render(
                         image.AddSample(x, y, sampler.Sample(ray));
                     }
                     if (glm::compMax(image.StandardDeviation(x, y)) > 1) {
-                        for (int s = 0; s < 64; s++) {
+                        for (int s = 0; s < 256; s++) {
                             const real u = (x + Random()) / w;
                             const real v = (y + Random()) / h;
                             const Ray ray = camera.MakeRay(u, 1 - v);

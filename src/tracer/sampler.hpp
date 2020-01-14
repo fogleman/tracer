@@ -9,7 +9,7 @@
 #include "ray.hpp"
 #include "util.hpp"
 
-// flag: sample one random light or sample all lights
+// TODO: sample one random light or sample all lights
 
 class Sampler {
 public:

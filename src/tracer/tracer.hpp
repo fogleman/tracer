@@ -5,6 +5,7 @@
 #include "colormap.hpp"
 #include "config.hpp"
 #include "cube.hpp"
+#include "disney.hpp"
 #include "embreemesh.hpp"
 #include "embreespheres.hpp"
 #include "hit.hpp"

@@ -35,6 +35,18 @@ public:
         return vec3(x, y, z);
     }
 
+    const vec3 &Normal() const {
+        return m_N;
+    }
+
+    const vec3 &Tangent() const {
+        return m_S;
+    }
+
+    const vec3 &BiTangent() const {
+        return m_T;
+    }
+
 private:
     vec3 m_S;
     vec3 m_T;
