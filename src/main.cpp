@@ -40,10 +40,10 @@ int main(int argc, char **argv) {
     //     std::make_shared<SolidTexture>(HexColor(0x7ECEFD) * 0.8));
     DisneyParameters params = {
         vec3(0.025, 0.25, 0.018), // BaseColor
-        1, // Metallic
+        0, // Metallic
         0, // Subsurface
-        0, // Specular
-        0.5, // Roughness
+        1, // Specular
+        0, // Roughness
         0, // SpecularTint
         0, // Anisotropic
         0, // Sheen

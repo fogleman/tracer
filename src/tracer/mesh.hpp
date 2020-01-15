@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "box.hpp"
+#include "config.hpp"
 
 class Mesh {
 public:
