@@ -36,22 +36,22 @@ int main(int argc, char **argv) {
     // auto material = std::make_shared<Metal>(albedo);
     // auto material = std::make_shared<FresnelBlend>(albedo, albedo, blinn);
     // auto material = std::make_shared<SpecularReflection>(albedo, 1.5);
-    // auto material = std::make_shared<Lambertian>(
-    //     std::make_shared<SolidTexture>(HexColor(0x7ECEFD) * 0.8));
-    DisneyParameters params = {
-        vec3(0.025, 0.25, 0.018), // BaseColor
-        0, // Metallic
-        0, // Subsurface
-        1, // Specular
-        0, // Roughness
-        0, // SpecularTint
-        0, // Anisotropic
-        0, // Sheen
-        0, // SheenTint
-        0, // Clearcoat
-        0, // ClearcoatGloss
-    };
-    auto material = std::make_shared<Disney>(params);
+    auto material = std::make_shared<Lambertian>(
+        std::make_shared<SolidTexture>(HexColor(0x7ECEFD) * 0.8));
+    // DisneyParameters params = {
+    //     vec3(0.025, 0.25, 0.018), // BaseColor
+    //     0.5, // Metallic
+    //     0, // Subsurface
+    //     0, // Specular
+    //     0.5, // Roughness
+    //     0, // SpecularTint
+    //     0, // Anisotropic
+    //     0, // Sheen
+    //     0, // SheenTint
+    //     0, // Clearcoat
+    //     0, // ClearcoatGloss
+    // };
+    // auto material = std::make_shared<Disney>(params);
 
     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
 

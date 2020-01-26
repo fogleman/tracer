@@ -6,6 +6,7 @@
 #include "material.hpp"
 #include "util.hpp"
 
+// https://github.com/mmp/pbrt-v3/blob/master/src/materials/disney.cpp
 // https://www.shadertoy.com/view/XdyyDd
 // https://schuttejoe.github.io/post/disneybsdf/
 // https://github.com/schuttejoe/Selas/blob/dev/Source/Core/Shading/Disney.cpp
