@@ -1,6 +1,6 @@
 #pragma once
 
-#include <embree3/rtcore.h>
+#include <embree4/rtcore.h>
 #include <vector>
 
 #include "material.hpp"
@@ -58,8 +58,8 @@ public:
     virtual bool Hit(
         const Ray &ray, const real tmin, const real tmax, HitInfo &hit) const
     {
-        RTCIntersectContext context;
-        rtcInitIntersectContext(&context);
+        RTCIntersectArguments args;
+        rtcInitIntersectArguments(&args);
 
         const vec3 &org = ray.Origin();
         const vec3 &dir = ray.Direction();
@@ -77,7 +77,7 @@ public:
         r.hit.geomID = RTC_INVALID_GEOMETRY_ID;
         r.hit.primID = RTC_INVALID_GEOMETRY_ID;
 
-        rtcIntersect1(m_Scene, &context, &r);
+        rtcIntersect1(m_Scene, &r, &args);
 
         if (r.hit.primID == RTC_INVALID_GEOMETRY_ID) {
             return false;

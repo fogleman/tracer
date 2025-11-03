@@ -1,8 +1,8 @@
 #pragma once
 
 #include <thread>
-#include <pmmintrin.h>
-#include <xmmintrin.h>
+// #include <pmmintrin.h>
+// #include <xmmintrin.h>
 
 #include "camera.hpp"
 #include "config.hpp"
@@ -27,8 +27,8 @@ void Render(
     std::vector<std::thread> threads;
     for (int wi = 0; wi < wn; wi++) {
         threads.push_back(std::thread([&](int i) {
-            _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-            _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+            // _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+            // _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
             for (int y = i; y < h; y += wn) {
                 for (int x = 0; x < w; x++) {
                     for (int s = 0; s < numSamples; s++) {

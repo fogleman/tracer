@@ -99,18 +99,19 @@ public:
         }
     }
 
-    void MoveTo(const vec3 &position, const vec3 &anchor) {
+    mat4 MoveTo(const vec3 &position, const vec3 &anchor) {
         const Box box = BoundingBox();
         const vec3 d = position - box.Anchor(anchor);
         const mat4 m = glm::translate(mat4(1), d);
         Transform(m);
+        return m;
     }
 
-    void Center() {
-        MoveTo(vec3(0), vec3(0.5));
+    mat4 Center() {
+        return MoveTo(vec3(0), vec3(0.5));
     }
 
-    void FitInside(const Box &box, const vec3 &anchor) {
+    mat4 FitInside(const Box &box, const vec3 &anchor) {
         const Box boundingBox = BoundingBox();
         const real scale = glm::compMin(box.Size() / boundingBox.Size());
         const vec3 extra = box.Size() - boundingBox.Size() * scale;
@@ -119,18 +120,19 @@ public:
         m = glm::scale(m, vec3(scale));
         m = glm::translate(m, -boundingBox.Min());
         Transform(m);
+        return m;
     }
 
-    void FitInUnitCube() {
+    mat4 FitInUnitCube() {
         const real r = 0.5;
         Box box(vec3(-r, -r, -r), vec3(r, r, r));
-        FitInside(box, vec3(0.5));
+        return FitInside(box, vec3(0.5));
     }
 
-    void FitInBiUnitCube() {
+    mat4 FitInBiUnitCube() {
         const real r = 1;
         Box box(vec3(-r, -r, -r), vec3(r, r, r));
-        FitInside(box, vec3(0.5));
+        return FitInside(box, vec3(0.5));
     }
 
     void Rotate(const real radians, const vec3 &axis) {

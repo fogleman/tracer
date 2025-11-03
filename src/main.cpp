@@ -1,7 +1,8 @@
+#define GLM_ENABLE_EXPERIMENTAL
 #include "tracer/tracer.hpp"
 
-const int width = 1600;
-const int height = 1600;
+const int width = 2048;
+const int height = 2048;
 
 const int samplesPerFrame = 16;
 const int numFrames = -1;
@@ -16,18 +17,18 @@ const real aperture = 0.01;
 const real focalDistance = 3;
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        std::cout << "Usage: tracer input.stl" << std::endl;
-        return 1;
-    }
+    // if (argc != 2) {
+    //     std::cout << "Usage: tracer input.stl" << std::endl;
+    //     return 1;
+    // }
 
     RTCDevice device = rtcNewDevice(NULL);
 
     auto world = std::make_shared<HittableList>();
 
-    auto mesh = LoadBinarySTL(argv[1]);
+    auto mesh = LoadBinarySTL(argv[2]);
     // mesh->SmoothNormals();
-    mesh->FitInUnitCube();
+    mat4 matrix = mesh->FitInUnitCube();
     mesh->Rotate(glm::radians(90.f), up);
 
     // auto blinn = std::make_shared<BlinnDistribution>(100);
@@ -37,7 +38,7 @@ int main(int argc, char **argv) {
     // auto material = std::make_shared<FresnelBlend>(albedo, albedo, blinn);
     // auto material = std::make_shared<SpecularReflection>(albedo, 1.5);
     auto material = std::make_shared<Lambertian>(
-        std::make_shared<SolidTexture>(HexColor(0x7ECEFD) * 0.8));
+        std::make_shared<SolidTexture>(HexColor(0x2980B9) * 0.9));
     // DisneyParameters params = {
     //     vec3(0.025, 0.25, 0.018), // BaseColor
     //     0.5, // Metallic
@@ -55,9 +56,20 @@ int main(int argc, char **argv) {
 
     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
 
+    {
+        auto mesh = LoadBinarySTL(argv[1]);
+        // mesh->SmoothNormals();
+        // mat4 matrix = mesh->FitInUnitCube();
+        mesh->Transform(matrix);
+        mesh->Rotate(glm::radians(90.f), up);
+        auto material = std::make_shared<Lambertian>(
+            std::make_shared<SolidTexture>(HexColor(0xE74C3C) * 0.9));
+        world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
+    }
+
     const real z = mesh->BoundingBox().Min().z;
-    auto white = std::make_shared<OrenNayar>(
-        std::make_shared<SolidTexture>(vec3(0.9)), 20);
+    auto white = std::make_shared<Lambertian>(
+        std::make_shared<SolidTexture>(HexColor(0xECF0F1) * 0.9));
     world->Add(std::make_shared<Cube>(vec3(-100), vec3(100, 100, z), white));
 
     auto light = std::make_shared<DiffuseLight>(
