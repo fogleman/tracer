@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 
     auto world = std::make_shared<HittableList>();
 
-    auto mesh = LoadBinarySTL(argv[2]);
+    auto mesh = LoadBinarySTL(argv[1]);
     // mesh->SmoothNormals();
     mat4 matrix = mesh->FitInUnitCube();
     mesh->Rotate(glm::radians(90.f), up);
@@ -56,16 +56,16 @@ int main(int argc, char **argv) {
 
     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
 
-    {
-        auto mesh = LoadBinarySTL(argv[1]);
-        // mesh->SmoothNormals();
-        // mat4 matrix = mesh->FitInUnitCube();
-        mesh->Transform(matrix);
-        mesh->Rotate(glm::radians(90.f), up);
-        auto material = std::make_shared<Lambertian>(
-            std::make_shared<SolidTexture>(HexColor(0xE74C3C) * 0.9));
-        world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
-    }
+    // {
+    //     auto mesh = LoadBinarySTL(argv[1]);
+    //     // mesh->SmoothNormals();
+    //     // mat4 matrix = mesh->FitInUnitCube();
+    //     mesh->Transform(matrix);
+    //     mesh->Rotate(glm::radians(90.f), up);
+    //     auto material = std::make_shared<Lambertian>(
+    //         std::make_shared<SolidTexture>(HexColor(0xE74C3C) * 0.9));
+    //     world->Add(std::make_shared<EmbreeMesh>(device, mesh, material));
+    // }
 
     const real z = mesh->BoundingBox().Min().z;
     auto white = std::make_shared<Lambertian>(
