@@ -109,6 +109,8 @@ public:
             }
         }
 
+        color = glm::min(color, vec3(1, 1, 1));
+
         return color;
     }
 

@@ -1,19 +1,19 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "tracer/tracer.hpp"
 
-const int width = 2048;
-const int height = 2048;
+const int width = 1600;
+const int height = 1600;
 
 const int samplesPerFrame = 16;
 const int numFrames = -1;
 const int numThreads = -1;
 
 const vec3 eye(3, 0, 1);
-const vec3 center(0, 0, -0.05);
+const vec3 center(0, 0, -0.075);
 const vec3 up(0, 0, 1);
 const real fovy = 25;
 const real aspect = real(width) / height;
-const real aperture = 0.03;
+const real aperture = 0.01;
 const real focalDistance = 3;
 
 int main(int argc, char **argv) {
@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     auto mesh = LoadBinarySTL(argv[1]);
     // mesh->SmoothNormals();
     mesh->FitInUnitCube();
-    mesh->Rotate(glm::radians(90.f), up);
+    mesh->Rotate(glm::radians(60.f), up);
 
     // model
     {
@@ -73,13 +73,13 @@ int main(int argc, char **argv) {
     // lights
     {
         auto light = std::make_shared<DiffuseLight>(
-            std::make_shared<SolidTexture>(Kelvin(5000) * real(5)));
+            std::make_shared<SolidTexture>(Kelvin(5000) * real(10)));
         world->Add(std::make_shared<Sphere>(vec3(5, 3, 3), 2, light));
-        world->Add(std::make_shared<Sphere>(vec3(5, 0, 3), 2, light));
+        // world->Add(std::make_shared<Sphere>(vec3(5, 0, 3), 2, light));
         world->Add(std::make_shared<Sphere>(vec3(5, -3, 3), 2, light));
 
         auto backlight = std::make_shared<DiffuseLight>(
-            std::make_shared<SolidTexture>(Kelvin(5000) * real(3)));
+            std::make_shared<SolidTexture>(Kelvin(5000) * real(2)));
         world->Add(std::make_shared<Sphere>(vec3(-5, 0, 3), 2, backlight));
     }
 
